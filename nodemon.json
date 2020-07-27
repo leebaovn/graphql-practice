@@ -2,6 +2,7 @@
   "env": {
     "MONGO_USER": "Bao_Staff",
     "MONGO_PWD": "U4ZxzR5v4tBu4a3k",
-    "MONGO_DB": "events-react-dev"
+    "MONGO_DB": "events-react-dev",
+    "secretKey": "somesupersecretkey"
   }
 }

@@ -44,7 +44,7 @@ module.exports = { //Resolver
         userId: user.id,
         email: user.email
       },
-      'somesupersecretkey',
+      `${process.env.secretKey}`,
       {
         expiresIn: "1h"
       })

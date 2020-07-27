@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import './auth.css'
+import AuthContext from './../../context/auth-context';
 function AuthPage(props) {
-
+  const { token, userId, logout, login } = useContext(AuthContext);
   const [isLogin, setIsLogin] = useState(true);
 
   const handleSubmit = (e) => {
@@ -40,17 +41,24 @@ function AuthPage(props) {
       body: JSON.stringify(requestBody),
       headers: {
         'Content-Type': "application/json",
-
       }
-    }).then(res => {
-      if (res.status !== 200 && res.status !== 201) {
-        throw new Error("Failed!");
-      }
-    }).then(resData => {
-      console.log(resData);
-    }).catch(err => {
-      console.log(err);
     })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        // setIsLogin(true);
+        return res.json();
+      })
+      .then(resData => {
+        const { token, userId, tokenExpiration } = resData.data.login;
+        if (token) {
+          login(token, userId, tokenExpiration);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 
   const email = React.createRef();
@@ -65,7 +73,7 @@ function AuthPage(props) {
         <label htmlFor="password">Password</label>
         <input type="password" name="password" id="password" ref={password} />
       </div>
-      <div className="form-action">
+      <div className="form-actions">
         <button type="submit" >{isLogin ? 'Sign in' : 'Sign up'}</button>
         <button type="button" onClick={() => setIsLogin(!isLogin)}>Switch to {isLogin ? 'Sign up' : 'Sign in'}</button>
       </div>

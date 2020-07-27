@@ -8,13 +8,15 @@
   padding: 0 1rem;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .header__logo h1 {
-  margin: 0;
+  margin: 0 2rem;
   font-size: 1.5rem;
   font-weight: bold;
   cursor: pointer;
+  color: #eee;
 }
 
 ul {
@@ -22,26 +24,37 @@ ul {
 }
 
 .header__nav {
-  margin-left: 1.5rem;
+  margin-right: 3rem;
 }
 
 .header__nav ul {
   display: flex;
   padding: 0;
   margin: 0;
+  align-items: center;
 }
 
 .header__nav li {
-  margin: 0 1rem;
+  /* margin: 0 1rem; */
 }
 
-.header__nav a {
+.header__nav a,
+.header__nav button {
   text-decoration: none;
-  color: #000;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  margin: 0;
+  background: none;
 }
 
 .header__nav a:hover,
 .header__nav a:active,
-.header__nav a.active {
-  color: #fff;
+.header__nav a.active,
+.header__nav button:hover,
+.header__nav button:active {
+  background: #fff;
+  color: #01d1d1;
 }
