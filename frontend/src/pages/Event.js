@@ -3,19 +3,35 @@ import './events.css'
 import Modal from './../components/Modal/Modal';
 import Backdrop from './../components/Backdrop/Backdrop';
 import AuthContext from './../context/auth-context';
+import EventList from './../components/Events/EventList/EventList';
+import Spinner from './../components/Spinner/Spinner';
+
 export default function Event(props) {
   const [creating, setCreating] = useState(false);
   const [events, setEvents] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const startCreateEvent = () => {
     setCreating(true);
   }
   const { token, userId } = useContext(AuthContext);
+
   const titleRef = React.createRef();
   const descriptionRef = React.createRef();
   const priceRef = React.createRef();
   const dateRef = React.createRef();
 
+  const [isActive, setIsActive] = useState(true);
+
+
+
+  const showDetail = (id) => {
+    const selected = events.find(e => e._id === id);
+    setSelectedEvent(selected);
+  }
+
   const fetchEvent = () => {
+    setIsLoading(true);
     const requestBody = {
       query: `
         query{
@@ -47,24 +63,30 @@ export default function Event(props) {
         return res.json();
       })
       .then(resData => {
-        const { events } = resData.data;
-        setEvents(events);
+        if (isActive) {
+          setEvents(resData.data.events);
+          setIsLoading(false);
+        }
       })
       .catch(err => {
-        console.log(err);
+        if (isActive) {
+          setIsLoading(false);
+        }
       })
   }
 
   useEffect(() => {
-    const eventFetched = setTimeout(fetchEvent());
+    fetchEvent();
     return () => {
-      clearTimeout(eventFetched);
+      setIsActive(false);
     }
-  }, [events])
+  }, [])
 
   const onCancel = () => {
     setCreating(false);
+    setSelectedEvent(null);
   }
+
   const onConfirm = (e) => {
     setCreating(false);
     const title = titleRef.current.value;
@@ -88,25 +110,28 @@ export default function Event(props) {
 
     const requestBody = {
       query: `
-        mutation{
+        mutation CreateEvent($title: String!, $des: String!, $price:Float!, $date: String! ){
           createEvent(eventInput: {
-            title: "${title}",
-            description: "${description}",
-            price:${price},
-            date: "${date}"
+            title: $title,
+            description: $des,
+            price:$price,
+            date: $date
           }){
             _id
             title
             description
             date
             price
-            creator{
-              _id
-              email
-            }
           }
         }
-    `}
+    `,
+      variable: {
+        title: title,
+        des: description,
+        price: price,
+        date: date
+      }
+    }
 
     fetch('http://localhost:3003/graphql', {
       method: "POST",
@@ -123,8 +148,21 @@ export default function Event(props) {
         return res.json();
       })
       .then(resData => {
-        console.log(resData.data);
-        setEvents([...events, resData.data]);
+        setEvents(pre => {
+          const { _id, title, description, price, date } = resData.data.createEvent;
+          const updatedEvent = [...pre];
+          updatedEvent.push({
+            _id,
+            title,
+            description,
+            date,
+            price,
+            creator: {
+              _id: userId,
+            }
+          })
+          return updatedEvent;
+        })
       })
       .catch(err => {
         console.log(err);
@@ -133,11 +171,57 @@ export default function Event(props) {
 
   const handleSubmit = () => { }
 
+  const handleBookEvent = () => {
+    const requestBody = {
+      query: `
+        mutation BookEvent($id: ID!){
+          bookEvent(eventId: $id){
+            _id
+            createdAt
+            updatedAt
+          }
+        }
+    `,
+      variables: {
+        id: selectedEvent._id
+      }
+    }
+
+    fetch('http://localhost:3003/graphql', {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        'Content-Type': "application/json",
+        "Authorization": 'Bearer ' + token
+      }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        return res.json();
+      })
+      .then(resData => {
+        console.log(resData);
+        setSelectedEvent(null);
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
+
   return (
     <React.Fragment>
-      {creating && <Backdrop />}
+      {creating || selectedEvent && <Backdrop />}
       {creating && (
-        <Modal title="Add Event" canCancel canConfirm onCancel={onCancel} onConfirm={onConfirm}>
+        <Modal
+          title="Add Event"
+          canCancel
+          canConfirm
+          onCancel={onCancel}
+          onConfirm={onConfirm}
+          confirmText="Confirm"
+        >
           <form onSubmit={handleSubmit}>
             <div className="form-control">
               <label htmlFor="title">Title</label>
@@ -157,15 +241,26 @@ export default function Event(props) {
             </div>
           </form>
         </Modal>)}
+      {selectedEvent && (
+        <Modal
+          title="Booking"
+          canCancel
+          canConfirm
+          onCancel={onCancel}
+          onConfirm={handleBookEvent}
+          confirmText="Book"
+        >
+          <h1>{selectedEvent.title}</h1>
+          <h4>{selectedEvent.price}VND - {new Date(selectedEvent.date).toLocaleDateString()}</h4>
+          <p>{selectedEvent.description}</p>
+        </Modal>)
+
+      }
       {token && (<div className="event-control">
         <p>Share your own Event!</p>
         <button className="btn" onClick={startCreateEvent}>Create Event</button>
       </div>)}
-      <ul className="event__list">
-        {events.map(event => (
-          <li className="event__list-item" key={event._id}>{event.title}</li>
-        ))}
-      </ul>
+      {isLoading ? <Spinner /> : (<EventList events={events} authUserId={userId} onViewDetail={showDetail} />)}
     </React.Fragment>
   )
 }

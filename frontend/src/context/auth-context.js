@@ -1,8 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
+
+const token = localStorage.getItem("accessToken");
 
 export default React.createContext({
-  token: null,
+  token: token || null,
   userId: null,
   login: (token, userId, tokenExpiration) => { },
-  logout: () => { },
+  logout: () => { localStorage.removeItem("accessToken") },
 })

@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import './auth.css'
 import AuthContext from './../../context/auth-context';
 function AuthPage(props) {
-  const { token, userId, logout, login } = useContext(AuthContext);
+  const { token, login } = useContext(AuthContext);
   const [isLogin, setIsLogin] = useState(true);
 
   const handleSubmit = (e) => {
@@ -14,27 +14,37 @@ function AuthPage(props) {
     }
     let requestBody = {
       query: `
-        query{
-          login(email: "${emailInput}", password: "${pwdInput}"){
+        query Login($email: String!, $password: String!){
+          login(email: $email, password: $password){
             userId
             token
             tokenExpiration
           }
         }
-    `}
+    `,
+      variables: {
+        email: emailInput,
+        password: pwdInput
+      }
+    }
     if (!isLogin) {
       requestBody = {
         query: `
-        mutation{
+        mutation CreateUser($email: String!, $password: String!){
           createUser(userInput: {
-            email:"${emailInput}",
-            password:"${pwdInput}"
+            email:$email,
+            password:$password
           }){
             _id
             email
           }
         }
-      `}
+      `,
+        variables: {
+          email: emailInput,
+          password: pwdInput
+        }
+      }
     }
     fetch('http://localhost:3003/graphql', {
       method: "POST",
@@ -54,6 +64,9 @@ function AuthPage(props) {
         const { token, userId, tokenExpiration } = resData.data.login;
         if (token) {
           login(token, userId, tokenExpiration);
+        }
+        if (isLogin) {
+          localStorage.setItem("accessToken", token);
         }
       })
       .catch(err => {
