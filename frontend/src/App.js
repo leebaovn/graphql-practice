@@ -10,7 +10,7 @@ import AuthContext from './context/auth-context';
 
 
 function App() {
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem("accessToken") || null);
   const [userId, setUserId] = useState(null);
   const login = (token, userId, tokenExpiration) => {
     setToken(token);

@@ -100,6 +100,7 @@ export default function Event(props) {
       date.trim().length === 0) {
       return;
     }
+
     const event = {
       title,
       description,
@@ -132,7 +133,7 @@ export default function Event(props) {
         date: date
       }
     }
-
+    debugger;
     fetch('http://localhost:3003/graphql', {
       method: "POST",
       body: JSON.stringify(requestBody),
