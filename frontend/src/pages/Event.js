@@ -126,14 +126,13 @@ export default function Event(props) {
           }
         }
     `,
-      variable: {
+      variables: {
         title: title,
         des: description,
         price: price,
         date: date
       }
     }
-    debugger;
     fetch('http://localhost:3003/graphql', {
       method: "POST",
       body: JSON.stringify(requestBody),
@@ -143,12 +142,14 @@ export default function Event(props) {
       }
     })
       .then(res => {
+        console.log(res);
         if (res.status !== 200 && res.status !== 201) {
           throw new Error("Failed!");
         }
         return res.json();
       })
       .then(resData => {
+        console.log(resData);
         setEvents(pre => {
           const { _id, title, description, price, date } = resData.data.createEvent;
           const updatedEvent = [...pre];

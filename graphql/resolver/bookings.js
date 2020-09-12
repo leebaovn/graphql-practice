@@ -7,9 +7,9 @@ const { transformBooking, transformEvent } = require('./merge');
 
 module.exports = { //Resolver
   bookings: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error("Unauthorization!");
-    // }
+    if (!req.isAuth) {
+      throw new Error("Unauthorization!");
+    }
     try {
       const bookings = await Booking.find({ user: req.userId });
       return bookings.map((booking) => {
