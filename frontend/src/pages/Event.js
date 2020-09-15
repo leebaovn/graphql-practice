@@ -169,7 +169,6 @@ export default function Event(props) {
       {token && (<div className="event-control">
         <p>Share your own Event!</p>
         <Button onClick={startCreateEvent}>Create Event</Button>
-
       </div>)}
       {isLoading ? <Spinner /> : (<EventList events={events} authUserId={userId} onViewDetail={showDetail} />)}
     </React.Fragment>
