@@ -1,10 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react'
 import './events.css'
 import Modal from './../components/Modal/Modal';
-import Backdrop from './../components/Backdrop/Backdrop';
 import AuthContext from './../context/auth-context';
 import EventList from './../components/Events/EventList/EventList';
 import Spinner from './../components/Spinner/Spinner';
+import axiosClient from './../api/axiosClient';
+import { GET_EVENTS } from '../api/query/Events.query';
+import { CREATE_EVENT, BOOK_EVENT } from './../api/mutation/Events.mutation';
+import Button from '../components/Button';
 
 export default function Event(props) {
   const [creating, setCreating] = useState(false);
@@ -32,47 +35,14 @@ export default function Event(props) {
 
   const fetchEvent = () => {
     setIsLoading(true);
-    const requestBody = {
-      query: `
-        query{
-          events{
-            _id
-            title
-            description
-            date
-            price
-            creator{
-              _id
-              email
-            }
-          }
-        }
-    `}
-
-    fetch('http://localhost:3003/graphql', {
-      method: "POST",
-      body: JSON.stringify(requestBody),
-      headers: {
-        'Content-Type': "application/json",
+    axiosClient.post('', GET_EVENTS).then(res => {
+      if (isActive) {
+        setEvents(res.data.events);
+        setIsLoading(false);
       }
+    }).catch(err => {
+      setIsLoading(false);
     })
-      .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error("Failed!");
-        }
-        return res.json();
-      })
-      .then(resData => {
-        if (isActive) {
-          setEvents(resData.data.events);
-          setIsLoading(false);
-        }
-      })
-      .catch(err => {
-        if (isActive) {
-          setIsLoading(false);
-        }
-      })
   }
 
   useEffect(() => {
@@ -100,111 +70,49 @@ export default function Event(props) {
       date.trim().length === 0) {
       return;
     }
-
-    const event = {
-      title,
-      description,
-      price,
-      date
-    }
     e.preventDefault();
-
-    const requestBody = {
-      query: `
-        mutation CreateEvent($title: String!, $des: String!, $price:Float!, $date: String! ){
-          createEvent(eventInput: {
-            title: $title,
-            description: $des,
-            price:$price,
-            date: $date
-          }){
-            _id
-            title
-            description
-            date
-            price
-          }
-        }
-    `,
+    axiosClient.post('/', {
+      ...CREATE_EVENT,
       variables: {
         title: title,
         des: description,
         price: price,
         date: date
       }
-    }
-    fetch('http://localhost:3003/graphql', {
-      method: "POST",
-      body: JSON.stringify(requestBody),
-      headers: {
-        'Content-Type': "application/json",
-        "Authorization": 'Bearer ' + token
-      }
-    })
-      .then(res => {
-        console.log(res);
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error("Failed!");
-        }
-        return res.json();
-      })
-      .then(resData => {
-        console.log(resData);
-        setEvents(pre => {
-          const { _id, title, description, price, date } = resData.data.createEvent;
-          const updatedEvent = [...pre];
-          updatedEvent.push({
-            _id,
-            title,
-            description,
-            date,
-            price,
-            creator: {
-              _id: userId,
-            }
-          })
-          return updatedEvent;
+    }).then(resData => {
+      console.log(resData);
+      setEvents(pre => {
+        const { _id, title, description, price, date } = resData.data.createEvent;
+        const updatedEvent = [...pre];
+        updatedEvent.push({
+          _id,
+          title,
+          description,
+          date,
+          price,
+          creator: {
+            _id: userId,
+          }
         })
+        return updatedEvent;
       })
+    })
       .catch(err => {
         console.log(err);
       })
+
   }
 
   const handleSubmit = () => { }
 
   const handleBookEvent = () => {
-    const requestBody = {
-      query: `
-        mutation BookEvent($id: ID!){
-          bookEvent(eventId: $id){
-            _id
-            createdAt
-            updatedAt
-          }
-        }
-    `,
+    axiosClient.post('/', {
+      ...BOOK_EVENT,
       variables: {
         id: selectedEvent._id
       }
-    }
-
-    fetch('http://localhost:3003/graphql', {
-      method: "POST",
-      body: JSON.stringify(requestBody),
-      headers: {
-        'Content-Type': "application/json",
-        "Authorization": 'Bearer ' + token
-      }
     })
-      .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error("Failed!");
-        }
-        return res.json();
-      })
-      .then(resData => {
-        console.log(resData);
+      .then(_ => {
         setSelectedEvent(null);
       })
       .catch(err => {
@@ -214,7 +122,7 @@ export default function Event(props) {
 
   return (
     <React.Fragment>
-      {creating || selectedEvent && <Backdrop />}
+
       {creating && (
         <Modal
           title="Add Event"
@@ -260,7 +168,8 @@ export default function Event(props) {
       }
       {token && (<div className="event-control">
         <p>Share your own Event!</p>
-        <button className="btn" onClick={startCreateEvent}>Create Event</button>
+        <Button onClick={startCreateEvent}>Create Event</Button>
+
       </div>)}
       {isLoading ? <Spinner /> : (<EventList events={events} authUserId={userId} onViewDetail={showDetail} />)}
     </React.Fragment>

@@ -1,6 +1,9 @@
 import React, { useState, useContext } from 'react';
 import './auth.css'
 import AuthContext from './../../context/auth-context';
+import axiosClient from './../../api/axiosClient';
+import { LOGIN } from './../../api/query/User.query';
+import { CREATE_USER } from './../../api/mutation/User.mutation';
 function AuthPage(props) {
   const { token, login } = useContext(AuthContext);
   const [isLogin, setIsLogin] = useState(true);
@@ -13,15 +16,7 @@ function AuthPage(props) {
       return;
     }
     let requestBody = {
-      query: `
-        query Login($email: String!, $password: String!){
-          login(email: $email, password: $password){
-            userId
-            token
-            tokenExpiration
-          }
-        }
-    `,
+      ...LOGIN,
       variables: {
         email: emailInput,
         password: pwdInput
@@ -29,37 +24,14 @@ function AuthPage(props) {
     }
     if (!isLogin) {
       requestBody = {
-        query: `
-        mutation CreateUser($email: String!, $password: String!){
-          createUser(userInput: {
-            email:$email,
-            password:$password
-          }){
-            _id
-            email
-          }
-        }
-      `,
+        ...CREATE_USER,
         variables: {
           email: emailInput,
           password: pwdInput
         }
       }
     }
-    fetch('http://localhost:3003/graphql', {
-      method: "POST",
-      body: JSON.stringify(requestBody),
-      headers: {
-        'Content-Type': "application/json",
-      }
-    })
-      .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error("Failed!");
-        }
-        // setIsLogin(true);
-        return res.json();
-      })
+    axiosClient.post('/', requestBody)
       .then(resData => {
         const { token, userId, tokenExpiration } = resData.data.login;
         if (token) {
