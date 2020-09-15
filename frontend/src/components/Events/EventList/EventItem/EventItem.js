@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import './eventitem.css';
 import AuthContext from './../../../../context/auth-context';
-
+import Button from '../../../Button';
 const EventItem = (props) => {
   const { token } = useContext(AuthContext);
   return (
@@ -17,9 +17,7 @@ const EventItem = (props) => {
 
         {token? props.userId === props.creatorId ?
           (<p>You're the owner of this event.</p>) :
-          (<button
-            className="btn"
-            onClick={() => props.onDetail(props.eventId)}>View Details</button>) : null}
+            (<Button onClick={()=>props.onDetail(props.eventId)}>View Details</Button>): null}
 
       </div>
     </li>
