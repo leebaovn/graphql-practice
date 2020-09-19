@@ -43,11 +43,27 @@ input UserInput{
   password: String!
 }
 
+input ProductInput{
+  name: String!
+  description: String!
+  price: Float!
+  discount: Float
+}
+
+type Product{
+  _id: ID!
+  name: String!
+  description: String!
+  price: Float!
+  discount:Float
+}
+
 type RootQuery{
   events: [Event!]!
   users: [User!]!
   bookings: [Booking!]!
   login(email: String, password: String!): AuthData!
+  products : [Product]
 }
 
 type RootMutation{
@@ -55,10 +71,11 @@ type RootMutation{
   createUser(userInput: UserInput!): User
   bookEvent(eventId: ID!): Booking!
   cancelBooking(bookingId: ID!): Event!
+  createProduct(product: ProductInput!): Product
 }
 
 schema{
   query: RootQuery
   mutation: RootMutation
 }
-`)
+`);

@@ -8,7 +8,8 @@
   padding: 0 1rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  box-sizing: border-box;
+  /* justify-content: space-between; */
 }
 
 .header__logo h1 {
@@ -57,4 +58,34 @@ ul {
 .header__nav button:active {
   background: #fff;
   color: #01d1d1;
+}
+
+.user {
+  /* margin-left: auto; */
+  margin-right: 2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.user__avt {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+}
+
+.user__name {
+  color: #fff;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.4s;
+}
+
+.user__name:hover {
+  color: #000;
 }
