@@ -3,13 +3,19 @@ import { NavLink } from 'react-router-dom';
 import './navigation.css';
 import AuthContext from './../../context/auth-context';
 import { UserOutlined } from '@ant-design/icons';
-
+import Avatar from 'antd/lib/avatar/avatar';
 const MainNavigation = (props) => {
-  const { token, logout } = useContext(AuthContext);
+  const [AuthState, AuthDispatch] = useContext(AuthContext);
+  const { token } = AuthState;
+  function logout() {
+    AuthDispatch({ type: 'logout' });
+  }
   return (
     <header className='header'>
       <div className='header__logo'>
-        <h1>Pet project</h1>
+        <h1>
+          <NavLink to='/'>Pet project</NavLink>
+        </h1>
       </div>
       <nav className='header__nav'>
         <ul>
