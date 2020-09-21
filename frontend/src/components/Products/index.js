@@ -7,7 +7,7 @@ function Products({ products }) {
     <>
       {products.map((item) => (
         <Col
-          style={{ marginRight: '2rem', marginBottom: '1rem' }}
+          style={{ marginBottom: '1rem', marginRight: '2rem' }}
           span='4'
           key={item}
         >
