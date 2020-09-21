@@ -2,10 +2,13 @@ import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import './navigation.css';
 import AuthContext from './../../context/auth-context';
-import { UserOutlined } from '@ant-design/icons';
+import CartContext from './../../context/cart/cart-context';
+import { ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import Avatar from 'antd/lib/avatar/avatar';
+import { Badge } from 'antd';
 const MainNavigation = (props) => {
   const [AuthState, AuthDispatch] = useContext(AuthContext);
+  const [CartState, CartDispatch] = useContext(CartContext);
   const { token } = AuthState;
   function logout() {
     AuthDispatch({ type: 'logout' });
@@ -44,6 +47,17 @@ const MainNavigation = (props) => {
           <UserOutlined />
         </div>
         <div className='user__name'>Lee Bao</div>
+        <div className='user__cart'>
+          <span className='avatar-item'>
+            <Badge count={CartState.items.length}>
+              <Avatar
+                shape='circle'
+                icon={<ShoppingCartOutlined />}
+                style={{ backgroundColor: 'inherit', color: '#333' }}
+              />
+            </Badge>
+          </span>
+        </div>
       </div>
     </header>
   );

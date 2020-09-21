@@ -1,13 +1,19 @@
-import { ADD_ITEM, CLEAR_CART } from './cart-action';
+import React from 'react';
+
+export const ACTIONS = {
+  ADD_ITEM: 'add_item',
+  CLEAR_CART: 'clear_cart',
+};
+
 export default function reducer(state, action) {
   switch (action.type) {
-    case ADD_ITEM: {
+    case ACTIONS.ADD_ITEM: {
       return {
         ...state,
         items: [...state.items, action.payload.items],
       };
     }
-    case CLEAR_CART: {
+    case ACTIONS.CLEAR_CART: {
       return {
         ...state,
         items: [],

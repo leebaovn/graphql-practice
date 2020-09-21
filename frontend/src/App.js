@@ -3,12 +3,15 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import './App.css';
 import Routes from './routes';
 import { AuthProvider } from './context/auth-context';
+import { CartProvider } from './context/cart/cart-context';
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes />
-      </Router>
+      <CartProvider>
+        <Router>
+          <Routes />
+        </Router>
+      </CartProvider>
     </AuthProvider>
   );
 }

@@ -1,7 +1,8 @@
-import React from 'react';
-import { useReducer } from 'react';
+import React, { useReducer } from 'react';
+
 const AuthContext = React.createContext();
 export default AuthContext;
+
 const INITIAL_STATE = {
   token: window.localStorage.getItem('accessToken') || '',
   userId: window.localStorage.getItem('userId') || '',

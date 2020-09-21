@@ -4,7 +4,7 @@ import { Image, Card, Row, Col } from 'antd';
 import Meta from 'antd/lib/card/Meta';
 import Products from '../Products';
 const contentStyle = {
-  height: '400px',
+  height: '600px',
   color: '#fff',
   lineHeight: '400px',
   textAlign: 'center',

@@ -1,8 +1,20 @@
 import { Button, Card, Col, Image } from 'antd';
 import Meta from 'antd/lib/card/Meta';
-import React from 'react';
+import React, { useContext } from 'react';
+import CartContext from './../../context/cart/cart-context';
+import { ACTIONS } from './../../context/cart/cart-reducer';
 
 function Products({ products }) {
+  const [CartState, CartDispatch] = useContext(CartContext);
+
+  const addToCart = () => {
+    CartDispatch({
+      type: ACTIONS.ADD_ITEM,
+      payload: {
+        items: { id: 1, name: 'Product' },
+      },
+    });
+  };
   return (
     <>
       {products.map((item) => (
@@ -34,7 +46,9 @@ function Products({ products }) {
               }}
             >
               <h3>$12,000</h3>
-              <Button style={{ marginTop: '1rem' }}>Buy</Button>
+              <Button style={{ marginTop: '1rem' }} onClick={addToCart}>
+                Buy
+              </Button>
             </div>
           </Card>
         </Col>

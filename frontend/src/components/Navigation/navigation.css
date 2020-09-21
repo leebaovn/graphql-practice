@@ -84,8 +84,15 @@ ul {
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.4s;
+  margin-right: 1rem;
 }
 
 .user__name:hover {
   color: #000;
+}
+
+.user__cart {
+}
+.avatar-item {
+  font-size: 1rem;
 }
