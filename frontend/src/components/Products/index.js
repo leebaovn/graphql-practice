@@ -3,17 +3,19 @@ import Meta from 'antd/lib/card/Meta';
 import React, { useContext } from 'react';
 import CartContext from './../../context/cart/cart-context';
 import { ACTIONS } from './../../context/cart/cart-reducer';
+import openNotification, { typeNotification } from './../Notification';
 
 function Products({ products }) {
   const [CartState, CartDispatch] = useContext(CartContext);
 
-  const addToCart = () => {
-    CartDispatch({
+  const addToCart = async () => {
+    await CartDispatch({
       type: ACTIONS.ADD_ITEM,
       payload: {
         items: { id: 1, name: 'Product' },
       },
     });
+    openNotification(typeNotification.success, 'Item added');
   };
   return (
     <>
