@@ -46,7 +46,11 @@ function Products({ products }) {
               }}
             >
               <h3>$12,000</h3>
-              <Button style={{ marginTop: '1rem' }} onClick={addToCart}>
+              <Button
+                type='primary'
+                style={{ marginTop: '1rem' }}
+                onClick={addToCart}
+              >
                 Buy
               </Button>
             </div>

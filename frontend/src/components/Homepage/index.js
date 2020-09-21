@@ -14,7 +14,7 @@ const contentStyle = {
 };
 
 function Homepage() {
-  const data = [1, 2, 3, 4, 5, 6];
+  const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   return (
     <div className='container'>
       <Carousel autoplay>
