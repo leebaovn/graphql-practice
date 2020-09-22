@@ -8,9 +8,11 @@ export const ACTIONS = {
 export default function reducer(state, action) {
   switch (action.type) {
     case ACTIONS.ADD_ITEM: {
+      const items = [...state.items, action.payload.items];
+      window.localStorage.setItem('cart', JSON.stringify(items));
       return {
         ...state,
-        items: [...state.items, action.payload.items],
+        items,
       };
     }
     case ACTIONS.CLEAR_CART: {

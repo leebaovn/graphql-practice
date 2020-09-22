@@ -4,7 +4,7 @@ import cartReducer from './cart-reducer';
 const CartContext = createContext();
 export default CartContext;
 const INITIAL_STATE = {
-  items: [],
+  items: JSON.parse(window.localStorage.getItem('cart')) || [],
 };
 
 export const CartProvider = ({ children }) => {
