@@ -1,4 +1,4 @@
-import { Button, Card, Col, Image } from 'antd';
+import { Button, Card, Col, Image, Row } from 'antd';
 import Meta from 'antd/lib/card/Meta';
 import React, { useContext } from 'react';
 import CartContext from './../../context/cart/cart-context';
@@ -18,11 +18,11 @@ function Products({ products }) {
     openNotification(typeNotification.success, 'Item added');
   };
   return (
-    <>
+    <Row gutter={[40, 24]}>
       {products.map((item) => (
         <Col
-          style={{ marginBottom: '1rem', marginRight: '2rem' }}
-          span='4'
+          // style={{ marginBottom: '1rem', marginRight: '2rem' }}
+          span={6}
           key={item}
         >
           <Card
@@ -59,7 +59,7 @@ function Products({ products }) {
           </Card>
         </Col>
       ))}
-    </>
+    </Row>
   );
 }
 

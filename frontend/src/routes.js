@@ -24,10 +24,15 @@ function Routes() {
       <main className='main-content'>
         <Switch>
           {token && <Redirect from='/auth' to='/events' exact />}
+
           {!token && <Route path='/auth' component={AuthPage} />}
+
           <Route path='/events' exact component={Event} />
+
           {token && <Route path='/bookings' exact component={Booking} />}
+
           <Route path='/' exact component={Homepage} />
+
           {!token && <Redirect to='/auth' />}
         </Switch>
       </main>

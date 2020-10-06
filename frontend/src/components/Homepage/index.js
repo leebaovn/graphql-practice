@@ -32,13 +32,7 @@ function Homepage() {
         </div>
       </Carousel>
       <Divider orientation='center'>Sản phẩm mới</Divider>
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'space-between',
-        }}
-      >
+      <div style={{ width: '100%' }}>
         <Products products={data} />
       </div>
     </div>
